@@ -188,7 +188,7 @@ public sealed partial class VideoItemViewModel : ViewModelBase<VideoInformation>
             var path = Microsoft.Windows.Storage.ApplicationData.GetDefault().LocalFolder.Path + "\\UIDFilterList.txt";
             try
             {
-                await File.WriteAllTextAsync(path, Data.Publisher?.User.Id + ",");
+                await FileToolkit.AddUid(Data.Publisher.User.Id);
                 _removeAction?.Invoke(this);
             }
             catch (Exception ex)
@@ -204,10 +204,9 @@ public sealed partial class VideoItemViewModel : ViewModelBase<VideoInformation>
     {
         if (Data.ExtensionData.TryGetValue("TagName", out object tagName) && !string.IsNullOrEmpty(tagName.ToString()))
         {
-            var path = Microsoft.Windows.Storage.ApplicationData.GetDefault().LocalFolder.Path + "\\TagFilterList.txt";
             try
             {
-                await File.WriteAllTextAsync(path, tagName + ",");
+                await FileToolkit.AddTag(tagName.ToString());
                 _removeAction?.Invoke(this);
             }
             catch (Exception ex)

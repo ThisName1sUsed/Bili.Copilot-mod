@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Bili Copilot. All rights reserved.
 
 using BiliCopilot.UI.Models.Constants;
+using BiliCopilot.UI.Toolkits;
 using BiliCopilot.UI.ViewModels.Items;
 using Microsoft.Extensions.Logging;
 using Richasy.BiliKernel.Models;
@@ -97,9 +98,7 @@ public sealed partial class PopularPageViewModel
         {
             foreach (var item in videos)
             {
-                if (item.Duration <= 30
-                    || _tagFilterList.Count > 0 && TagFilter(item)
-                    || _uidFilterList.Count > 0 && _uidFilterList.Contains(item.Publisher.User.Id))
+                if (item.Duration <= 30 || TagFilter(item) || FileToolkit.UidFilterList.Contains(item.Publisher.User.Id))
                     continue;
                 Videos.Add(new VideoItemViewModel(item, style, removeAction: RemoveVideo));
             }
@@ -108,12 +107,15 @@ public sealed partial class PopularPageViewModel
 
     private bool TagFilter(VideoInformation item)
     {
-        if (item.ExtensionData.TryGetValue("TagName", out object tagName) && _tagFilterList.Contains(tagName.ToString()))
+        item.ExtensionData.TryGetValue("TagName", out object tagName);
+        if(tagName is null)
+            return false;
+        if (FileToolkit.TagFilterList.Contains(tagName.ToString()))
             return true;
         var title = item.ExtensionData.TryGetValue("Title", out object value) ? value.ToString() : "";
-        foreach (string tag in _tagFilterList)
+        foreach (string tag in FileToolkit.TagFilterList)
         {
-            if (_tagFilterList.Contains(tagName) || title.Contains(tag))
+            if (FileToolkit.TagFilterList.Contains(tagName) || title.Contains(tag))
                 return true;
         }
         return false;
@@ -127,16 +129,9 @@ public sealed partial class PopularPageViewModel
 
     private void GetTagFilterList()
     {
-        if (_tagFilterList.Count > 0)
-            return;
-        var path = Microsoft.Windows.Storage.ApplicationData.GetDefault().LocalFolder.Path + "\\TagFilterList.txt";
-        if (!File.Exists(path))
-            File.CreateText(path);
         try
         {
-            _tagFilterList.AddRange(File.ReadAllText(path).Split(',').ToList());
-            if (string.IsNullOrEmpty(_tagFilterList[_tagFilterList.Count - 1]))
-                _tagFilterList.RemoveAt(_tagFilterList.Count - 1);
+            FileToolkit.InitTagFilter();
         }
         catch (Exception ex)
         {
@@ -146,16 +141,9 @@ public sealed partial class PopularPageViewModel
 
     private void GetUidFilterList()
     {
-        if (_uidFilterList.Count > 0)
-            return;
-        var path = Microsoft.Windows.Storage.ApplicationData.GetDefault().LocalFolder.Path + "\\UIDFilterList.txt";
-        if (!File.Exists(path))
-            File.CreateText(path);
         try
         {
-            _uidFilterList.AddRange(File.ReadAllText(path).Split(',').ToList());
-            if (string.IsNullOrEmpty(_uidFilterList[_uidFilterList.Count - 1]))
-                _uidFilterList.RemoveAt(_uidFilterList.Count - 1);
+            FileToolkit.InitUidFilter();
         }
         catch (Exception ex)
         {

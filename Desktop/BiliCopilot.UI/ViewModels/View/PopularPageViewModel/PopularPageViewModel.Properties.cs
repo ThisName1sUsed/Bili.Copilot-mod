@@ -19,8 +19,6 @@ public sealed partial class PopularPageViewModel
 
     private long _recommendOffset;
     private long _hotOffset;
-    private readonly List<string> _tagFilterList = new();
-    private readonly List<string> _uidFilterList = new();
 
     [ObservableProperty]
     private bool _isPartitionLoading;
