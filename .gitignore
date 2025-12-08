@@ -361,3 +361,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/Desktop/BiliCopilot.UI/BiliCopilot.UI_TemporaryKey.pfx
+/.gitignore
+/.gitignore
