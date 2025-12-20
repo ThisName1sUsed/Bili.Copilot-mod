@@ -78,8 +78,8 @@ internal sealed partial class PgcMediaSourceResolver(IPlayerService playerServic
 
     public override async Task<MpvMediaSource> GetSourceAsync()
     {
-        var volume = SettingsToolkit.ReadLocalSetting(Models.Constants.SettingNames.PlayerVolume, 100d);
-        var speed = SettingsToolkit.ReadLocalSetting(Models.Constants.SettingNames.PlayerSpeed, 1d);
+        var volume = SettingsToolkit.ReadLocalSetting(SettingNames.PlayerVolume, 50d);
+        var speed = SettingsToolkit.ReadLocalSetting(SettingNames.PlayerSpeed, 1d);
         var cookies = cookiesResolver.GetCookieString();
         const string referer = InternalHttpExtensions.VideoReferer;
         const string userAgent = InternalHttpExtensions.VideoUserAgent;
@@ -94,7 +94,7 @@ internal sealed partial class PgcMediaSourceResolver(IPlayerService playerServic
         var options = new MpvPlayOptions
         {
             WindowHandle = WindowHandle,
-            InitialVolume = volume,
+            InitialVolume = volume >= 100 ? 50 : volume,
             InitialSpeed = speed,
             UserAgent = userAgent,
             HttpHeaders = headers,
