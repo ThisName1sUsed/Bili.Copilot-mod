@@ -83,6 +83,18 @@ public sealed partial class Pinner : PinnerBase
         }
     }
 
+    private void OnPlayInPrivateClick(object sender, RoutedEventArgs e)
+    {
+        if (!((sender as FrameworkElement)?.DataContext is PinItem item))
+            return;
+        ItemsFlyout.Hide();
+        if (item.Type == Models.Constants.PinContentType.Video)
+        {
+            var snapshot = new MediaSnapshot(new VideoInformation(new MediaIdentifier(item.Id, item.Title, default), default));
+            this.Get<AppViewModel>().OpenPlayerCommand.Execute(snapshot);
+        }
+    }
+
     private void OnFlyoutOpened(object sender, object e)
     {
         DispatcherQueue.TryEnqueue(Microsoft.UI.Dispatching.DispatcherQueuePriority.Low, () => ViewModel.IsFlyoutOpened = true);

@@ -61,6 +61,11 @@
                                 <ic:SymbolIcon Foreground="{ThemeResource SystemFillColorCriticalBrush}" Symbol="Delete" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
+                        <MenuFlyoutItem MinWidth="180" Click="OnPlayInPrivateClick" Text="{ext:Locale Name=PlayInPrivate}">
+                            <MenuFlyoutItem.Icon>
+                                <ic:SymbolIcon Foreground="{ThemeResource SystemFillColorCriticalBrush}" Symbol="EyeOff" />
+                            </MenuFlyoutItem.Icon>
+                        </MenuFlyoutItem>
                     </MenuFlyout>
                 </Button.ContextFlyout>
             </Button>
