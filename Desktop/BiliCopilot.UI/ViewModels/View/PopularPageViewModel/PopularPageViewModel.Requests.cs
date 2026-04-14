@@ -94,13 +94,25 @@ public sealed partial class PopularPageViewModel
 
     private void TryAddVideos(IReadOnlyList<VideoInformation> videos, VideoCardStyle style)
     {
-        if (videos is not null)
+        if (videos?.Count == 0)    
+            return;
+        var items = videos.AsParallel().WithDegreeOfParallelism(Environment.ProcessorCount - 1)
+                          .Where(item => item.Duration > 30 && !TagFilter(item) && !FileToolkit.UidFilterList.Contains(item.Publisher.User.Id))
+                          .Select(item => new VideoItemViewModel(item, style, removeAction: RemoveVideo)).ToList();
+        if (items.Count > 0)
         {
-            foreach (var item in videos)
+            if (Microsoft.UI.Dispatching.DispatcherQueue.GetForCurrentThread() is var dispatcherQueue)
             {
-                if (item.Duration <= 30 || TagFilter(item) || FileToolkit.UidFilterList.Contains(item.Publisher.User.Id))
-                    continue;
-                Videos.Add(new VideoItemViewModel(item, style, removeAction: RemoveVideo));
+                dispatcherQueue.TryEnqueue(() =>
+                {
+                    foreach (var vm in items)
+                        Videos.Add(vm);
+                });
+            }
+            else
+            {
+                foreach (var vm in items)
+                    Videos.Add(vm);
             }
         }
     }
